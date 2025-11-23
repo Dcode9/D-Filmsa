@@ -3,194 +3,413 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D'Films - Project Kintsugi</title>
+    <title>D'Films Education & Originals</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Custom scrollbar for webkit */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #111;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #f59e0b;
-        }
+        /* Custom Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
-        .fade-in {
-            animation: fadeIn 0.2s ease-out forwards;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+        .animate-zoom-in { animation: zoomIn 0.5s ease-out forwards; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
     </style>
 </head>
-<body class="bg-black text-white font-sans selection:bg-amber-500 selection:text-black overflow-x-hidden">
+<body class="bg-[#0a0a0a] text-white font-sans selection:bg-indigo-500 selection:text-white overflow-x-hidden pb-20">
 
-    <!-- Background Elements -->
-    <div class="fixed inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-black to-black -z-10"></div>
-    
-    <!-- Gold Crack Top Left -->
-    <svg class="absolute pointer-events-none opacity-20 top-0 left-0 w-96 h-96 animate-pulse" viewBox="0 0 100 100" fill="none" stroke="#F59E0B" stroke-width="0.5">
-        <path d="M10,10 Q30,20 40,40 T70,70 M40,40 L60,30" stroke-dasharray="4 2" />
-    </svg>
-
-    <!-- Gold Crack Bottom Right -->
-    <svg class="absolute pointer-events-none opacity-20 bottom-0 right-0 w-full h-full rotate-180 opacity-10" viewBox="0 0 100 100" fill="none" stroke="#F59E0B" stroke-width="0.5">
-        <path d="M10,10 Q30,20 40,40 T70,70 M40,40 L60,30" stroke-dasharray="4 2" />
-    </svg>
-
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 to-transparent backdrop-blur-sm border-b border-white/5">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <i data-lucide="film" class="w-6 h-6 text-amber-500"></i>
-                <span class="text-xl font-bold tracking-widest uppercase font-serif">D'Films</span>
-            </div>
-            <div class="flex items-center gap-6">
-                <button class="hidden md:block text-sm text-gray-300 hover:text-amber-500 transition-colors">Films</button>
-                <button class="hidden md:block text-sm text-gray-300 hover:text-amber-500 transition-colors">About</button>
-                <button class="px-4 py-1 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 border border-amber-500/30 text-amber-500 hover:bg-amber-500/10 text-xs">
-                    Subscribe
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <!-- Logo (Secret Button to Exclusive Content) -->
+                <button onclick="app.navigateTo('exclusive')" class="flex items-center gap-2 group hover:opacity-80 transition-opacity" title="Click for D'Films Originals">
+                    <i id="logo-icon" data-lucide="film" class="w-6 h-6 text-indigo-500 transition-colors"></i>
+                    <span class="text-xl font-bold font-serif tracking-widest">D'Films</span>
                 </button>
+
+                <!-- Breadcrumbs -->
+                <div id="breadcrumbs" class="hidden md:flex items-center gap-2 text-sm text-gray-500">
+                    <!-- Injected by JS -->
+                </div>
             </div>
+
+            <!-- Back Button (Mobile/Deep Nav) -->
+            <button id="back-btn" onclick="app.goBack()" class="hidden flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors bg-white/5 px-3 py-1.5 rounded-full">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Back</span>
+            </button>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="relative pt-32 pb-20 px-4 min-h-screen flex flex-col items-center justify-center">
-        
-        <!-- Title Section -->
-        <div class="text-center mb-12 relative z-10">
-            <div class="inline-block mb-4 px-3 py-1 border border-amber-500/30 rounded text-amber-500 text-xs tracking-[0.3em] uppercase">
-                Official Trailer
-            </div>
-            <h1 class="text-5xl md:text-7xl font-bold font-serif mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500 drop-shadow-2xl">
-                PROJECT <span class="text-amber-500 italic">KINTSUGI</span>
-            </h1>
-            <p class="text-gray-400 max-w-md mx-auto text-sm md:text-base tracking-wide">
-                "There is beauty in the broken." <br/>
-                A short film by D'Films.
-            </p>
-        </div>
-
-        <!-- Video Player Container (YouTube Iframe) -->
-        <div class="relative w-full max-w-5xl aspect-video bg-gray-900 rounded-xl overflow-hidden shadow-2xl shadow-amber-900/20 border border-white/10">
-            <iframe 
-                class="w-full h-full"
-                src="https://www.youtube.com/embed/jDNcFXpa18Q?rel=0&modestbranding=1" 
-                title="Project Kintsugi Trailer" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                allowfullscreen
-            ></iframe>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="mt-8 flex flex-wrap gap-4 justify-center">
-            <button id="infoBtn" class="px-8 py-3 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 border border-amber-500/30 text-amber-500 hover:bg-amber-500/10">
-                <i data-lucide="info" class="w-5 h-5"></i> Film Details
-            </button>
-            <button onclick="navigator.clipboard.writeText(window.location.href)" class="px-8 py-3 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 border border-amber-500/30 text-amber-500 hover:bg-amber-500/10">
-                <i data-lucide="share-2" class="w-5 h-5"></i> Share Link
-            </button>
-        </div>
-
-        <!-- Info Modal -->
-        <div id="infoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 fade-in">
-            <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" id="modalBackdrop"></div>
-            <div class="relative bg-gray-900 border border-amber-500/20 p-8 rounded-2xl max-w-lg w-full shadow-2xl">
-                <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-                
-                <h2 class="text-2xl font-serif font-bold text-amber-500 mb-2">Project Kintsugi</h2>
-                <div class="flex gap-2 mb-4 text-xs text-gray-400 uppercase tracking-wider">
-                    <span>Drama</span>
-                    <span>•</span>
-                    <span>2025</span>
-                    <span>•</span>
-                    <span>2min Preview</span>
-                </div>
-                
-                <p class="text-gray-300 leading-relaxed mb-6">
-                    When the pieces of a shattered past are put back together, they create something stronger than before. 
-                    Project Kintsugi explores the delicate art of healing and the gold that binds our scars.
-                </p>
-                
-                <div class="space-y-4 text-sm">
-                    <div class="border-b border-white/5 py-2">
-                        <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Edited and Prompted By</span>
-                        <span class="text-white font-medium">Dhairya Shah</span>
-                    </div>
-                    <div class="border-b border-white/5 py-2">
-                        <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Generated By</span>
-                        <span class="text-white leading-relaxed">Veo 3, 3.1, with the help from Imagen 3, Nano Banana and Nano Banana Pro, and Google AI Studio</span>
-                    </div>
-                </div>
-
-                <div class="mt-8">
-                    <button id="watchNowBtn" class="w-full px-6 py-2 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20">
-                        Close & Watch
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Call to Action -->
-        <div class="mt-16 text-center">
-            <h3 class="text-xl font-light mb-6">Releasing Worldwide <span class="text-amber-500 font-bold">Summer 2025</span></h3>
-        </div>
+    <!-- Main Content Area -->
+    <main id="app-content" class="pt-10 max-w-7xl mx-auto min-h-[60vh]">
+        <!-- Views will be injected here by JavaScript -->
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 bg-black py-12 text-center">
-        <div class="flex justify-center items-center gap-2 mb-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-           <i data-lucide="film" class="w-8 h-8 text-amber-500"></i>
-        </div>
-        <p class="text-gray-500 text-sm">© 2025 D'Films. All rights reserved.</p>
+    <footer id="main-footer" class="mt-20 border-t border-white/5 py-12 text-center text-gray-600 text-sm">
+        <p>© 2025 D'Films Education. Empowering students across India.</p>
     </footer>
 
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
-        // Elements
-        const infoBtn = document.getElementById('infoBtn');
-        const infoModal = document.getElementById('infoModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalBackdrop = document.getElementById('modalBackdrop');
-        const watchNowBtn = document.getElementById('watchNowBtn');
-
-        // Modal Logic
-        function toggleModal() {
-            infoModal.classList.toggle('hidden');
-        }
-
-        infoBtn.addEventListener('click', toggleModal);
-        closeModalBtn.addEventListener('click', toggleModal);
-        modalBackdrop.addEventListener('click', toggleModal);
-        
-        watchNowBtn.addEventListener('click', () => {
-            toggleModal();
-            // Optional: Scroll to video if needed, or just close
-            document.querySelector('iframe').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        });
-
-        // Close modal on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !infoModal.classList.contains('hidden')) {
-                toggleModal();
+        /**
+         * DATA CONFIGURATION
+         */
+        const VIDEO_DATA = {
+            // The Exclusive Video (Hidden)
+            kintsugi: {
+                id: "jDNcFXpa18Q",
+                title: "Project Kintsugi",
+                desc: "A preview of the upcoming short film.",
+                credits: "Edited by Dhairya Shah • Generated by Veo 3 & Google AI Studio"
+            },
+            // The Educational Content
+            ncert: {
+                class9: [
+                    {
+                        id: "chapter-1",
+                        title: "Weathering the Storm in Ersama (Part I)",
+                        videoId: "WgHCyIrC2-Y", // Placeholder until you provide new link
+                        duration: "10:24",
+                        desc: "The cyclone that hit Orissa in October 1999 killed thousands of people and devastated hundreds of villages."
+                    },
+                    {
+                        id: "chapter-2",
+                        title: "The Bond of Love",
+                        videoId: "placeholder",
+                        duration: "Coming Soon",
+                        desc: "Content coming soon..."
+                    }
+                ]
             }
+        };
+
+        /**
+         * APP STATE MANAGEMENT
+         */
+        const app = {
+            view: 'home', // home, class, player, exclusive
+            selectedClass: null,
+            selectedVideo: null,
+
+            init() {
+                this.render();
+            },
+
+            navigateTo(view, payload = null) {
+                this.view = view;
+                if (view === 'class') this.selectedClass = payload;
+                if (view === 'player') this.selectedVideo = payload;
+                this.render();
+                window.scrollTo(0,0);
+            },
+
+            goBack() {
+                if (this.view === 'player') this.navigateTo('class', this.selectedClass);
+                else this.navigateTo('home');
+            },
+
+            /**
+             * RENDER LOGIC
+             */
+            render() {
+                const container = document.getElementById('app-content');
+                const breadcrumbs = document.getElementById('breadcrumbs');
+                const backBtn = document.getElementById('back-btn');
+                const footer = document.getElementById('main-footer');
+                const logoIcon = document.getElementById('logo-icon');
+
+                // 1. Handle Navigation UI
+                backBtn.style.display = this.view === 'home' ? 'none' : 'flex';
+                footer.style.display = this.view === 'exclusive' ? 'none' : 'block';
+                
+                // Update Logo Color for Exclusive Mode
+                if (this.view === 'exclusive') {
+                    logoIcon.classList.remove('text-indigo-500');
+                    logoIcon.classList.add('text-amber-500');
+                } else {
+                    logoIcon.classList.add('text-indigo-500');
+                    logoIcon.classList.remove('text-amber-500');
+                }
+
+                // Render Breadcrumbs
+                this.renderBreadcrumbs(breadcrumbs);
+
+                // 2. Render Main View
+                container.innerHTML = '';
+                
+                if (this.view === 'home') this.renderHome(container);
+                else if (this.view === 'class') this.renderClass(container);
+                else if (this.view === 'player') this.renderPlayer(container);
+                else if (this.view === 'exclusive') this.renderExclusive(container);
+
+                // Refresh Icons
+                lucide.createIcons();
+            },
+
+            renderBreadcrumbs(el) {
+                if (this.view === 'exclusive') {
+                    el.innerHTML = '';
+                    return;
+                }
+
+                let html = `<button onclick="app.navigateTo('home')" class="hover:text-white transition-colors flex items-center gap-1"><i data-lucide="home" class="w-4 h-4"></i> Home</button>`;
+                
+                if (this.selectedClass) {
+                    html += `<i data-lucide="chevron-right" class="w-4 h-4"></i>
+                             <button onclick="app.navigateTo('class', ${this.selectedClass})" class="hover:text-white transition-colors ${this.view === 'class' ? 'text-white font-medium' : ''}">Class ${this.selectedClass}</button>`;
+                }
+                
+                if (this.view === 'player' && this.selectedVideo) {
+                    html += `<i data-lucide="chevron-right" class="w-4 h-4"></i>
+                             <span class="text-white font-medium truncate max-w-[200px]">${this.selectedVideo.title}</span>`;
+                }
+                el.innerHTML = html;
+            },
+
+            /**
+             * VIEW 1: HOME (Tile Layout)
+             */
+            renderHome(container) {
+                let gridHtml = '';
+                
+                // Generate 12 Class Tiles
+                for(let i = 1; i <= 12; i++) {
+                    const isClass9 = i === 9;
+                    const isActive = isClass9; // ONLY Class 9 is active
+                    
+                    // Styling logic
+                    const activeClasses = "bg-gray-800/50 hover:bg-gray-800 border-indigo-500/30 hover:border-indigo-500 shadow-lg shadow-indigo-500/10 cursor-pointer transform hover:scale-[1.02]";
+                    const inactiveClasses = "bg-gray-900/20 border-white/5 opacity-30 cursor-not-allowed grayscale";
+                    
+                    const clickAction = isActive ? `onclick="app.navigateTo('class', ${i})"` : '';
+                    const dotHtml = isClass9 ? '<span class="absolute top-3 right-3 w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></span>' : '';
+                    const statusText = isActive ? '<span class="text-[10px] text-green-400 font-mono mt-1">Available Now</span>' : '<span class="text-[10px] text-gray-600 font-mono mt-1">Coming Soon</span>';
+
+                    gridHtml += `
+                        <button ${clickAction} class="relative p-6 h-32 rounded-2xl border transition-all duration-300 flex flex-col items-center justify-center gap-1 overflow-hidden ${isActive ? activeClasses : inactiveClasses}">
+                            <span class="text-xs font-bold ${isActive ? 'text-indigo-400' : 'text-gray-500'} uppercase tracking-wider">Class</span>
+                            <span class="text-4xl font-bold text-white">${i}</span>
+                            ${dotHtml}
+                            ${statusText}
+                        </button>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <div class="animate-slide-up">
+                        <div class="text-center mb-12">
+                            <h1 class="text-4xl md:text-5xl font-bold mb-6 font-serif text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-600">Learning Library</h1>
+                            
+                            <!-- Personal Note Card -->
+                            <div class="max-w-xl mx-auto bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-5 mb-8 text-left flex gap-4 relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+                                <div class="shrink-0 bg-indigo-500/20 w-10 h-10 rounded-full flex items-center justify-center">
+                                    <i data-lucide="user" class="w-5 h-5 text-indigo-400"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-indigo-200 font-semibold text-sm mb-1">Developer's Note</h3>
+                                    <p class="text-indigo-200/80 text-sm leading-relaxed">
+                                        Hi! I'm currently in <strong>Class 9</strong>, so I'm building this website as I study. 
+                                        I'll be adding videos for Classes 9-12 first. Stay tuned!
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-5xl mx-auto">
+                            ${gridHtml}
+                        </div>
+                    </div>
+                `;
+            },
+
+            /**
+             * VIEW 2: CLASS LIST (Chapter List)
+             */
+            renderClass(container) {
+                const videos = this.selectedClass === 9 ? VIDEO_DATA.ncert.class9 : [];
+                
+                let contentHtml = '';
+                if (videos.length > 0) {
+                    videos.forEach((video, idx) => {
+                        const isLocked = video.videoId === 'placeholder';
+                        
+                        // Thumbnail Logic
+                        const thumb = isLocked 
+                            ? `<div class="w-full h-full flex items-center justify-center text-gray-600 bg-gray-900"><i data-lucide="lock" class="w-6 h-6"></i></div>`
+                            : `<img src="https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity"><div class="absolute inset-0 flex items-center justify-center"><i data-lucide="play-circle" class="w-10 h-10 text-white opacity-90 group-hover:scale-110 transition-transform shadow-xl rounded-full bg-black/50"></i></div>`;
+                        
+                        const clickHandler = isLocked ? '' : `onclick="app.loadVideo(${idx})"`;
+                        const cursorClass = isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-800 hover:border-indigo-500/30';
+
+                        contentHtml += `
+                            <div ${clickHandler} class="p-4 rounded-xl border border-white/5 bg-gray-800/30 flex gap-4 transition-all group ${cursorClass}">
+                                <div class="w-32 h-20 rounded-lg flex-shrink-0 relative overflow-hidden shadow-lg border border-white/5">
+                                    ${thumb}
+                                </div>
+                                <div class="flex-1 py-1 min-w-0">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <h3 class="font-semibold text-white truncate pr-2">${idx + 1}. ${video.title}</h3>
+                                        <span class="text-[10px] font-mono text-gray-400 bg-gray-900 px-2 py-1 rounded border border-white/5 whitespace-nowrap">${video.duration}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-400 line-clamp-2">${video.desc}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    contentHtml = `
+                        <div class="text-center py-20 bg-gray-800/20 rounded-xl border border-dashed border-gray-700">
+                            <i data-lucide="book-open" class="w-12 h-12 text-gray-600 mx-auto mb-4"></i>
+                            <h3 class="text-xl text-gray-400 mb-2">Content Coming Soon</h3>
+                            <p class="text-gray-500">We are currently uploading videos for Class ${this.selectedClass}.</p>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <div class="animate-fade-in max-w-4xl mx-auto px-4">
+                        <div class="flex items-center gap-6 mb-8 p-6 bg-gradient-to-r from-indigo-900/20 to-transparent rounded-2xl border border-white/5">
+                            <div class="w-20 h-20 rounded-2xl bg-indigo-600 flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-indigo-600/20">
+                                ${this.selectedClass}
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold text-white">Class ${this.selectedClass} English</h2>
+                                <p class="text-gray-400 mt-1 flex items-center gap-2 text-sm">
+                                    <i data-lucide="book" class="w-4 h-4"></i> NCERT Curriculum • Beehive & Moments
+                                </p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            ${contentHtml}
+                        </div>
+                    </div>
+                `;
+            },
+
+            loadVideo(idx) {
+                const video = VIDEO_DATA.ncert.class9[idx];
+                this.navigateTo('player', video);
+            },
+
+            /**
+             * VIEW 3: PLAYER (Video Focus)
+             */
+            renderPlayer(container) {
+                container.innerHTML = `
+                    <div class="max-w-5xl mx-auto px-4 animate-fade-in">
+                        ${this.getBlurryLoaderHtml(this.selectedVideo.videoId, this.selectedVideo.title)}
+                        
+                        <div class="mt-8 bg-gray-900/50 p-6 rounded-2xl border border-white/5">
+                            <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-white mb-2">${this.selectedVideo.title}</h1>
+                                    <p class="text-gray-400 leading-relaxed text-sm">${this.selectedVideo.desc}</p>
+                                </div>
+                                <button onclick="navigator.clipboard.writeText(window.location.href)" class="shrink-0 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                                    <i data-lucide="share-2" class="w-4 h-4"></i> Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                this.initBlurryLoader();
+            },
+
+            /**
+             * VIEW 4: EXCLUSIVE (Kintsugi)
+             */
+            renderExclusive(container) {
+                const kintsugi = VIDEO_DATA.kintsugi;
+                container.innerHTML = `
+                    <div class="relative min-h-[70vh] flex flex-col items-center justify-center text-center animate-zoom-in">
+                        <!-- Gold Accents -->
+                        <div class="absolute top-0 left-0 w-64 h-64 bg-amber-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+                        <div class="absolute bottom-0 right-0 w-64 h-64 bg-amber-900/10 blur-[100px] rounded-full pointer-events-none"></div>
+                        
+                        <div class="inline-block px-3 py-1 border border-amber-500/30 rounded text-amber-500 text-xs tracking-[0.3em] uppercase mb-6">
+                            D'Films Original
+                        </div>
+                        
+                        <h1 class="text-5xl md:text-7xl font-serif font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-500 to-amber-700 drop-shadow-sm">
+                            PROJECT KINTSUGI
+                        </h1>
+                        
+                        <div class="w-full max-w-4xl mb-8">
+                            ${this.getBlurryLoaderHtml(kintsugi.id, kintsugi.title)}
+                        </div>
+
+                        <div class="max-w-xl mx-auto text-sm text-gray-500 space-y-2">
+                            <p class="uppercase tracking-widest text-xs text-amber-500/70">Credits</p>
+                            <p>${kintsugi.credits}</p>
+                        </div>
+                    </div>
+                `;
+                this.initBlurryLoader();
+            },
+
+            /**
+             * HELPER: Video Component with Blurry Loader
+             */
+            getBlurryLoaderHtml(videoId, title) {
+                const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                return `
+                <div class="relative w-full aspect-video bg-gray-900 rounded-xl overflow-hidden shadow-2xl group border border-white/10">
+                    <!-- 1. Blur Layer -->
+                    <div id="loader-layer" class="absolute inset-0 z-20 transition-opacity duration-1000 ease-in-out bg-black">
+                        <div class="absolute inset-0 bg-cover bg-center blur-xl scale-110 opacity-40" style="background-image: url('${thumbnailUrl}')"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
+                            <i data-lucide="loader-2" class="w-10 h-10 animate-spin text-amber-500 mb-4"></i>
+                            <span class="text-sm font-medium tracking-widest uppercase opacity-80">Loading Video</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. Iframe -->
+                    <iframe 
+                        id="video-iframe"
+                        class="w-full h-full relative z-10 opacity-0 transition-opacity duration-700"
+                        src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&onload=1" 
+                        title="${title}"
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>`;
+            },
+
+            initBlurryLoader() {
+                const iframe = document.getElementById('video-iframe');
+                const loader = document.getElementById('loader-layer');
+                
+                if(!iframe || !loader) return;
+
+                // When iframe loads, fade out loader
+                iframe.onload = () => {
+                    // Small artificial delay to make it look smoother
+                    setTimeout(() => {
+                        loader.style.opacity = '0';
+                        loader.style.pointerEvents = 'none';
+                        iframe.style.opacity = '1';
+                    }, 800);
+                };
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
         });
     </script>
 </body>
