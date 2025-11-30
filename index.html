@@ -80,12 +80,10 @@
                 class9: [
                     {
                         id: "chapter-1",
-                        title: "The Weathering Storm in Ersama (Part I)",
-                        // UPDATED: Using Google Drive ID and Type
+                        title: "Weathering The Storm in Ersama (Part I)",
                         videoId: "1qNDYbs6BeR0fzxPQJfg5aem-gJrq6ndJ", 
                         type: "google_drive",
-                        // PASTE YOUR GENERATED IMAGE LINK BELOW FOR THUMBNAIL
-                        thumbnail: "", 
+                        thumbnail: "", // Paste generated image link here if available
                         duration: "10:24",
                         desc: "The cyclone that hit Orissa in October 1999 killed thousands of people and devastated hundreds of villages."
                     },
@@ -253,12 +251,10 @@
                         const isLocked = video.videoId === 'placeholder';
                         
                         // Thumbnail Logic
-                        // Google Drive videos don't have default public thumbnails, so we handle that case.
                         let thumbSrc = video.thumbnail;
                         if (!thumbSrc) {
                             if (video.type === 'google_drive') {
-                                // Fallback for GDrive if no custom thumb provided
-                                thumbSrc = ''; 
+                                thumbSrc = ''; // Fallback for GDrive
                             } else {
                                 thumbSrc = `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`;
                             }
@@ -270,7 +266,6 @@
                         } else if (thumbSrc) {
                             thumbHtml = `<img src="${thumbSrc}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity"><div class="absolute inset-0 flex items-center justify-center"><i data-lucide="play-circle" class="w-10 h-10 text-white opacity-90 group-hover:scale-110 transition-transform shadow-xl rounded-full bg-black/50"></i></div>`;
                         } else {
-                            // Fallback if no thumb available (common for GDrive without custom image)
                             thumbHtml = `<div class="w-full h-full flex items-center justify-center bg-gray-900 group-hover:bg-gray-800 transition-colors border border-white/5"><i data-lucide="play-circle" class="w-10 h-10 text-indigo-500 opacity-90 group-hover:scale-110 transition-transform"></i></div>`;
                         }
                         
